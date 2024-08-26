@@ -14,13 +14,13 @@ namespace PROCESSES._MULTITHREADING_AND_ASYNCHRONY
 
             if (File.Exists(sourceFile))
             {
-                // Запуск копирования в отдельном потоке
+                // Р—Р°РїСѓСЃРє РєРѕРїРёСЂРѕРІР°РЅРёСЏ РІ РѕС‚РґРµР»СЊРЅРѕРј РїРѕС‚РѕРєРµ
                 Thread copyThread = new Thread(() => CopyFileByCharacter(sourceFile, destinationFile));
                 copyThread.Start();
             }
             else
             {
-                MessageBox.Show("Исходный файл не найден.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("РСЃС…РѕРґРЅС‹Р№ С„Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ.", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -45,17 +45,18 @@ namespace PROCESSES._MULTITHREADING_AND_ASYNCHRONY
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //путь к файлу назначения в текстовое поле "To"
+                    //РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ РЅР°Р·РЅР°С‡РµРЅРёСЏ РІ С‚РµРєСЃС‚РѕРІРѕРµ РїРѕР»Рµ "To"
                     textBoxTo.Text = saveFileDialog.FileName;
                 }
             }
         }
 
-        // для работы с большими файлами лучше использовать StreamReader
-        //BaseStream — это поток данных, который используется для чтения или записи данных на более низком уровне.
-        //StreamReader и StreamWriter предоставляют методы для работы с текстовыми данными
-        //(например, чтение строк, символов),
-        //но эти операции выполняются на основе потока байтов, который обрабатывает данные.
+        // РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Р±РѕР»СЊС€РёРјРё С„Р°Р№Р»Р°РјРё Р»СѓС‡С€Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ StreamReader
+        //BaseStream вЂ” СЌС‚Рѕ РїРѕС‚РѕРє РґР°РЅРЅС‹С…, РєРѕС‚РѕСЂС‹Р№ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ С‡С‚РµРЅРёСЏ РёР»Рё Р·Р°РїРёСЃРё РґР°РЅРЅС‹С… РЅР° Р±РѕР»РµРµ РЅРёР·РєРѕРј СѓСЂРѕРІРЅРµ.
+        //StreamReader Рё StreamWriter РїСЂРµРґРѕСЃС‚Р°РІР»СЏСЋС‚ РјРµС‚РѕРґС‹ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ С‚РµРєСЃС‚РѕРІС‹РјРё РґР°РЅРЅС‹РјРё
+        //(РЅР°РїСЂРёРјРµСЂ, С‡С‚РµРЅРёРµ СЃС‚СЂРѕРє, СЃРёРјРІРѕР»РѕРІ),
+        //РЅРѕ СЌС‚Рё РѕРїРµСЂР°С†РёРё РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ РЅР° РѕСЃРЅРѕРІРµ РїРѕС‚РѕРєР° Р±Р°Р№С‚РѕРІ, РєРѕС‚РѕСЂС‹Р№ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РґР°РЅРЅС‹Рµ.
+
         private void CopyFileByCharacter(string sourceFile, string destinationFile)
         {
             using (StreamReader reader = new StreamReader(sourceFile))
@@ -65,7 +66,8 @@ namespace PROCESSES._MULTITHREADING_AND_ASYNCHRONY
                 int totalCharacters = (int)reader.BaseStream.Length;
                 int charactersCopied = 0;
 
-                Invoke(() => {
+                Invoke(() =>
+                {
                     progressBar.Maximum = totalCharacters;
                     progressBar.Value = 0;
                 });
@@ -73,24 +75,60 @@ namespace PROCESSES._MULTITHREADING_AND_ASYNCHRONY
                 while (reader.Read(buffer, 0, buffer.Length) > 0)
                 {
                     writer.Write(buffer, 0, buffer.Length);
-                    writer.Flush();  // принудительная запись данных в файл
+                    writer.Flush();  // РїСЂРёРЅСѓРґРёС‚РµР»СЊРЅР°СЏ Р·Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РІ С„Р°Р№Р»
 
                     charactersCopied++;
 
-                    // обновление прогресса в главном потоке
-                    Invoke(() => {
+                    // РѕР±РЅРѕРІР»РµРЅРёРµ РїСЂРѕРіСЂРµСЃСЃР° РІ РіР»Р°РІРЅРѕРј РїРѕС‚РѕРєРµ
+                    Invoke(() =>
+                    {
                         progressBar.Value = charactersCopied;
                     });
 
-                    Thread.Sleep(50); // 50 миллисекунд задержки на каждый символ
+                    Thread.Sleep(50); // 50 РјРёР»Р»РёСЃРµРєСѓРЅРґ Р·Р°РґРµСЂР¶РєРё РЅР° РєР°Р¶РґС‹Р№ СЃРёРјРІРѕР»
                 }
             }
 
-            // уведомление о завершении копирования
-            Invoke(() => {
-                MessageBox.Show("Копирование завершено!", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // СѓРІРµРґРѕРјР»РµРЅРёРµ Рѕ Р·Р°РІРµСЂС€РµРЅРёРё РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+            Invoke(() =>
+            {
+                MessageBox.Show("РљРѕРїРёСЂРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ!", "РРЅС„РѕСЂРјР°С†РёСЏ", MessageBoxButtons.OK, MessageBoxIcon.Information);
             });
         }
+
+        //private void CopyFileByByte(string sourceFile, string destinationFile)
+        //{
+        //    using (FileStream sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read))
+        //    using (FileStream destinationStream = new FileStream(destinationFile, FileMode.Create, FileAccess.Write))
+        //    {
+        //        byte[] buffer = new byte[1]; 
+        //        int bytesRead;
+        //        long totalBytes = sourceStream.Length;
+        //        long bytesCopied = 0;
+
+        //        Invoke(() => {
+        //            progressBar.Maximum = (int)totalBytes;
+        //            progressBar.Value = 0;
+        //        });
+
+        //        while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+        //        {
+        //            destinationStream.Write(buffer, 0, bytesRead);
+        //            destinationStream.Flush();
+        //            bytesCopied += bytesRead;
+
+        //            Invoke(() => {
+        //                progressBar.Value = (int)bytesCopied;
+        //            });
+
+        //            Thread.Sleep(50);
+        //        }
+        //    }
+
+        //    Invoke(() => {
+        //        MessageBox.Show("РљРѕРїРёСЂРѕРІР°РЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ!", "РРЅС„РѕСЂРјР°С†РёСЏ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //    });
+        //}
 
 
     }
